@@ -15,41 +15,7 @@ En esta base ya están creados los paquetes para:
 - manejo global de errores
 
 
-## Estructura del bff
 
-src/main/java/com/example/demo
-├─ client
-│  └─ UsuarioClient.java
-│
-├─ config
-│  ├─ RestTemplateConfig.java
-│  └─ WebClientConfig.java
-│
-├─ controller
-│  ├─ AuthController.java
-│  └─ UsuarioBffController.java
-│
-├─ dto
-│  ├─ auth
-│  │  ├─ LoginRequest.java
-│  │  └─ LoginResponse.java
-│  │
-│  └─ usuario
-│     ├─ UsuarioRequest.java
-│     └─ UsuarioResponse.java
-│
-├─ exception
-│  ├─ ErrorResponse.java
-│  └─ GlobalExceptionHandler.java
-│
-├─ security
-│  ├─ JwtAuthenticationFilter.java
-│  └─ SecurityConfig.java
-│
-└─ service
-   ├─ AuthService.java
-   ├─ JwtService.java
-   └─ UsuarioBffService.java
 
 ## Stack
 
