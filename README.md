@@ -10,9 +10,46 @@ En esta base ya están creados los paquetes para:
 
 - autenticación
 - configuración de clientes HTTP
-- seguridad
+- seguridad con JWT
 - DTOs de auth y usuario
 - manejo global de errores
+
+
+## Estructura del bff
+
+src/main/java/com/example/demo
+├─ client
+│  └─ UsuarioClient.java
+│
+├─ config
+│  ├─ RestTemplateConfig.java
+│  └─ WebClientConfig.java
+│
+├─ controller
+│  ├─ AuthController.java
+│  └─ UsuarioBffController.java
+│
+├─ dto
+│  ├─ auth
+│  │  ├─ LoginRequest.java
+│  │  └─ LoginResponse.java
+│  │
+│  └─ usuario
+│     ├─ UsuarioRequest.java
+│     └─ UsuarioResponse.java
+│
+├─ exception
+│  ├─ ErrorResponse.java
+│  └─ GlobalExceptionHandler.java
+│
+├─ security
+│  ├─ JwtAuthenticationFilter.java
+│  └─ SecurityConfig.java
+│
+└─ service
+   ├─ AuthService.java
+   ├─ JwtService.java
+   └─ UsuarioBffService.java
 
 ## Stack
 
@@ -70,11 +107,14 @@ server.port=8080
 
 ## Estado actual
 
-El proyecto está en una fase inicial. La base estructural está lista, pero todavía faltan implementar los endpoints, servicios y clientes hacia los sistemas externos.
+El proyecto tiene implementada la autenticación con JWT. La base estructural está lista con los clientes HTTP configurados. Actualmente se trabaja en completar los endpoints y conectar los servicios externos.
 
 ## Próximos pasos sugeridos
 
-- definir los endpoints públicos del BFF
-- conectar los clientes HTTP a los servicios reales
-- completar la seguridad JWT
-- agregar pruebas para la capa de servicio y controladores
+- implementar endpoints públicos del BFF (login, registro, perfil)
+- conectar los clientes HTTP a los servicios de usuario y autenticación
+- agregar validación en los DTOs
+- agregar pruebas unitarias e integración para servicios y controladores
+- documentar API con Swagger/OpenAPI
+
+

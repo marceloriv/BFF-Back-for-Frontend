@@ -1,5 +1,7 @@
 package com.example.demo.dto.auth;
 
-public class LoginRequest {
+//es record porque es una clase que solo contiene atributos para solo trasportar datos, no logica de negocio
+
+public record  LoginRequest (String username, String password) {
 
 }
