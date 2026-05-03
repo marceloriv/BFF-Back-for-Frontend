@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: bff-back-for-frontend
+  config:
+    import: ${SPRING_CONFIG_IMPORT:optional:configserver:http://localhost:8888}
