@@ -8,25 +8,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.auth.LoginRequest;
 import com.example.demo.dto.auth.LoginResponse;
-import com.example.demo.service.JwtService;
+import com.example.demo.service.AuthService;
 
 @RestController
-
-
 @RequestMapping("/auth")
-
 public class AuthController {
 
     @Autowired
-    private JwtService servicio;
+    private AuthService authService;
 
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest request) {
-        return new LoginResponse(servicio.generarToken(request.username())); // se genera el token con el username del request
+        return authService.login(request);
     }
-    
-
-
-
 
 }
