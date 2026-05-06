@@ -3,3 +3,9 @@ spring:
     name: bff-back-for-frontend
   config:
     import: ${SPRING_CONFIG_IMPORT:optional:configserver:http://localhost:8888}
+
+server:
+  port: 8081
+
+gateway:
+  base-url: ${GATEWAY_BASE_URL:http://localhost:8222}
