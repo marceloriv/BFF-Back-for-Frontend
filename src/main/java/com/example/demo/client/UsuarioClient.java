@@ -7,7 +7,7 @@ import com.example.demo.dto.usuario.ValidarCredencialesResponse;
 
 @Component // para que Spring lo detecte como un componente y lo inyecte donde se necesite
 public class UsuarioClient {
-
+//uwu
     private final ApiGatewayClient apiGatewayClient;
 
     public UsuarioClient(ApiGatewayClient apiGatewayClient) {
