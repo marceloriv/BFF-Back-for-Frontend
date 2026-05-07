@@ -29,21 +29,22 @@ public class GlobalExeptionHandler {
 	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
-    @ExceptionHandler(RestClientException.class)
-    public ResponseEntity<ErrorResponse> handleRestClientException(
-	    RestClientException exception,
-	    HttpServletRequest request
-    ) {
+	@ExceptionHandler(RestClientException.class)
+	public ResponseEntity<ErrorResponse> handleRestClientException(
+		RestClientException exception,
+		HttpServletRequest request
+	) {
+	String detail = exception.getMessage() != null ? exception.getMessage() : "No se pudo conectar con el servicio externo";
 	ErrorResponse errorResponse = new ErrorResponse(
 		LocalDateTime.now(),
 		HttpStatus.BAD_GATEWAY.value(),
 		HttpStatus.BAD_GATEWAY.getReasonPhrase(),
-		"No se pudo conectar con el servicio de usuarios",
+		detail,
 		request.getRequestURI()
 	);
 
 	return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(errorResponse);
-    }
+	}
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(
