@@ -38,10 +38,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 // Aquí podrías extraer el username y roles del token y establecer la
                 // autenticación
 
-                String username = servicio.extraerUsername(token);
+                String correo = servicio.extraerCorreo(token);
 
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, null,
-                        List.of());
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(correo, null,
+                    List.of());
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
