@@ -5,10 +5,12 @@ import java.util.Date;
 
 import javax.crypto.SecretKey;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+
 
 @Service
 
@@ -16,13 +18,13 @@ public class JwtService {
 
     // la contraseña se pasa como variable de entorno, no se guarda en el código
     // fuente
-
-    private final String SECRET = "clave-secreta-super-larga-de-minimo-32-caracteres";
+    @Value("${jwt.secret}")
+    private String secret;
     // permite decir cuanta duración va a tener el token, en este caso 15 min
     private final long EXPIRATION = 1000 * 60 * 15; // 15 en milisegundos
     private SecretKey getKey() {
 
-        return Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
+        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
     public String generarToken(String correo) {
