@@ -60,7 +60,7 @@ En Windows también puedes usar:
 .\mvnw.cmd spring-boot:run
 ```
 
-La aplicación arranca por defecto en el puerto `8080`.
+La aplicación arranca por defecto en el puerto `8081`.
 
 ## Configuración
 
@@ -68,7 +68,7 @@ La configuración actual vive en `src/main/resources/application.properties`.
 
 ```properties
 spring.application.name=BFF-Back-for-Frontend
-server.port=8080
+server.port=8081
 ```
 
 ## Estado actual
