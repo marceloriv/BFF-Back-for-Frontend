@@ -9,4 +9,3 @@ public record ValidarCredencialesResponse(
         String mensaje
 ) {
 }
-

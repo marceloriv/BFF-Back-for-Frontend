@@ -8,14 +8,16 @@ final class SecurityRoutes {
 
     static final String[] PUBLIC_ROUTES = {
             "/auth/login",
-            "/api/v1/usuarios/**"
-    };
-
-    static final String[] PROTECTED_ROUTES = {
-                "/api/v1/eventos/**",
-                "/api/v1/pedidos/**"
             
-
+    };
+    //rutas protegidas por rol 
+    static final String[] PROTECTED_ROUTES = {
+                "/api/v1/usuarios/**",
+                "/api/v1/eventos/**",
+                "/api/v1/pedidos/**",
+                "/api/v1/donaciones/**",
+                "/api/v1/carrito/**",
+                "/api/v1/mensajeria/**"
     };
 }
 
