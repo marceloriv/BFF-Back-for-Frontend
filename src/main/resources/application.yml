@@ -1,8 +1,8 @@
 spring:
-  application:
-    name: bff-back-for-frontend
   config:
     import: ${SPRING_CONFIG_IMPORT:optional:configserver:http://localhost:8888}
+  application:
+    name: bff-back-for-frontend
 
 server:
   port: 8081
@@ -12,3 +12,12 @@ gateway:
 
 jwt:
   secret: ${JWT_SECRET}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus, threaddump
+  endpoint:
+    health:
+      show-details: always
