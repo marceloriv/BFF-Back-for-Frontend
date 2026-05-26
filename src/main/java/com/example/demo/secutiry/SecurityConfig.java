@@ -23,7 +23,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
 
                         .requestMatchers(HttpMethod.PUT, "/api/v1/usuarios/*/rol").hasRole("ADMINPLATAFORMA")
-                        
+
 
 
                         .requestMatchers(SecurityRoutes.PROTECTED_ROUTES).authenticated()
