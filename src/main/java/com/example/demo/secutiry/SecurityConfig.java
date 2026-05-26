@@ -20,9 +20,9 @@ public class SecurityConfig {
                         .requestMatchers(SecurityRoutes.PUBLIC_ROUTES).permitAll()
 
 
-                        .requestMatchers(HttpMethod.POST, "api/v1/usuarios").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
 
-                        .requestMatchers(HttpMethod.PUT, "api/v1/usuarios/*/rol").hasRole("ADMINPLATAFORMA")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/usuarios/*/rol").hasRole("ADMINPLATAFORMA")
                         
 
 
