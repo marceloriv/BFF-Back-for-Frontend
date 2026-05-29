@@ -28,7 +28,7 @@ WORKDIR /app
 COPY --from=build /workspace/target/*.jar app.jar
 
 # se expone el puerto en el que corre la aplicación
-EXPOSE 8080
+EXPOSE 8081
 
 # se ejecuta el java
 
