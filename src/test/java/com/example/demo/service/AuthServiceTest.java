@@ -41,7 +41,7 @@ class AuthServiceTest {
         when(usuarioClient.validarCredenciales(
             new com.example.demo.dto.usuario.ValidarCredencialesRequest("user@example.com", "password123")))
             .thenReturn(validacion);
-        when(jwtService.generarToken("user@example.com")).thenReturn("token_valido");
+        when(jwtService.generarToken("user@example.com", "USER")).thenReturn("token_valido");
 
         LoginResponse response = authService.login(request);
 

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
-
 @Service
 
 public class JwtService {
@@ -22,15 +21,18 @@ public class JwtService {
     private String secret;
     // permite decir cuanta duración va a tener el token, en este caso 15 min
     private final long EXPIRATION = 1000 * 60 * 15; // 15 en milisegundos
+
     private SecretKey getKey() {
 
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generarToken(String correo) {
+    public String generarToken(String correo, String rol) {
         // cque va a generar y cuando va a generarlo
-        return Jwts.builder().subject(correo).issuedAt(new Date()) // acá se coloca lo que se quiere encriptar
-                .expiration(new Date(EXPIRATION + System.currentTimeMillis())) // se le dice que el token va a expirar                                                // en 15 min
+        return Jwts.builder().subject(correo).claim("rol", rol).issuedAt(new Date()) // acá se coloca lo que se quiere
+                                                                                     // encriptar
+                .expiration(new Date(EXPIRATION + System.currentTimeMillis())) // se le dice que el token va a expirar
+                                                                               // // en 15 min
                 .signWith(getKey())
                 .compact();
 
@@ -43,10 +45,19 @@ public class JwtService {
 
     }
 
+    public String extraerRol(String token) {
+        return Jwts.parser().verifyWith(getKey()).build()
+                .parseSignedClaims(token).getPayload().get("rol", String.class); // se le dice que se va a extraer el
+                                                                                 // rol del
+                                                                                 // token
+
+    }
+
     public boolean esValido(String token) {
 
         try {
             extraerCorreo(token);
+            extraerRol(token);
             return true; // si el token es válido, se devuelve true
         } catch (Exception e) {
             return false; // si el token no es válido, se devuelve false

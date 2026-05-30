@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-
+import org.springframework.web.client.RestClientResponseException;
 /*archivo que hacer las llmadas a la api gataway para que los clientes no tengan que 
 preocuparse por la api de cada microservicio
 */
@@ -52,12 +52,16 @@ public class ApiGatewayClient {
     // se desee que Spring convierta el JSON de respuesta a un DTO concreto.
     // Ejemplo: get(ruta, ValidarCredencialesResponse.class)
     public <T> T get(String ruta, Class<T> responseType) {
-        try {
-            return restTemplate.getForObject(construirUrl(ruta), responseType);
-        } catch (RestClientException e) {
-            throw new RestClientException(String.format("ApiGateway error calling %s: %s", construirUrl(ruta), e.getMessage()), e);
-        }   // se rellena el primero % con la ruta y el segundo % con el mensaje de error de la excepción original, para dar más contexto sobre qué salió mal.
+    try {
+        return restTemplate.getForObject(construirUrl(ruta), responseType);
+    } catch (RestClientResponseException e) {
+        throw e;
+    } catch (RestClientException e) {
+        throw new RestClientException(
+                String.format("ApiGateway error calling %s: %s", construirUrl(ruta), e.getMessage()), e
+        );
     }
+}
 
     public <T> T post(String ruta, Object body, Class<T> responseType) {
         return ejecutarConBody(HttpMethod.POST, ruta, body, responseType);

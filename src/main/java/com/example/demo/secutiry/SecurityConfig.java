@@ -21,11 +21,21 @@ public class SecurityConfig {
 
 
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
-
+                        .requestMatchers(HttpMethod.GET, "/api/v1/usuarios").hasAnyRole("ADMIN", "ADMINPLATAFORMA")
+                        // Solo el admin de plataforma puede cambiar roles
                         .requestMatchers(HttpMethod.PUT, "/api/v1/usuarios/*/rol").hasRole("ADMINPLATAFORMA")
-
-
-
+                        //eventos
+                        .requestMatchers(HttpMethod.POST, "/api/v1/eventos").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/eventos").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/**").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
+                        //donaciones
+                        .requestMatchers(HttpMethod.POST, "/api/v1/donaciones").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/donaciones").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/donaciones/**").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
+                        //mensajería
+                        .requestMatchers(HttpMethod.POST, "/api/v1/mensajeria").hasRole("ADMIN")
+                    
+                    
                         .requestMatchers(SecurityRoutes.PROTECTED_ROUTES).authenticated()
                         .anyRequest().authenticated()
                 )

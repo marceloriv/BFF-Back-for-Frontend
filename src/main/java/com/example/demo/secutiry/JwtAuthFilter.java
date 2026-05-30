@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -39,11 +40,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 // autenticación
 
                 String correo = servicio.extraerCorreo(token);
-
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(correo, null,
-                    List.of());
-
-                SecurityContextHolder.getContext().setAuthentication(auth);
+                
+                String rol = servicio.extraerRol(token);
+                // se extrae el rol que viene dentro del jwt, se guarda en una variable y se agega a una lista para que spring Security pueda filtrar si es que el usuario tiene permiso para acceder a una ruta protegida
+                //ROLE_ = para que springSecurity reconozca el rol por conversión automatica
+                if (rol != null && !rol.isBlank()) {
+                    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(correo, null,
+                            List.of(new SimpleGrantedAuthority("ROLE_" + rol.trim() .toUpperCase())));
+                            
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                }
             }
 
         }

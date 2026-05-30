@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.RestClientException;
+import org.springframework.http.MediaType;
+import org.springframework.web.client.RestClientResponseException;
 
 import java.time.LocalDateTime;
 
@@ -28,6 +30,18 @@ public class GlobalExeptionHandler {
 
 	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
+
+	//metodo para manejar errores de servicios externos, para tener un control total de la respuesta
+	@ExceptionHandler(RestClientResponseException.class)
+	public ResponseEntity<String> handleRestClientResponseException(
+			RestClientResponseException exception
+	) {
+		return ResponseEntity
+				.status(exception.getStatusCode())
+				.contentType(MediaType.APPLICATION_JSON)
+				.body(exception.getResponseBodyAsString());
+	}
+	
 
 	@ExceptionHandler(RestClientException.class)
 	public ResponseEntity<ErrorResponse> handleRestClientException(
