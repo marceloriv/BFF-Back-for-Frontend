@@ -1,0 +1,35 @@
+# este archivo permite ejecutar acciones de trabajo cuando se hace un push
+
+name: Publicar imagen docker BFF
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    env:
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
+    steps:
+      - name: Descargar el codigo del repo
+        uses: actions/checkout@v4
+
+      - name: Iniciar sesion docker
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_NAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_NAME }}/bff-back-for-frontend:latest
+            ${{ secrets.DOCKERHUB_NAME }}/bff-back-for-frontend:${{ github.sha }}
+                        
+

@@ -22,17 +22,15 @@ public class AuthService {
     public LoginResponse login(LoginRequest request) {
         ValidarCredencialesRequest validarRequest = new ValidarCredencialesRequest(
                 request.correo(),
-                request.contrasena()
-        );
+                request.contrasena());
 
-        ValidarCredencialesResponse usuarioValidado =
-                usuarioClient.validarCredenciales(validarRequest);
+        ValidarCredencialesResponse usuarioValidado = usuarioClient.validarCredenciales(validarRequest);
 
         if (usuarioValidado == null || !usuarioValidado.valido()) {
             throw new IllegalArgumentException("Credenciales inválidas");
         }
 
-        String token = jwtService.generarToken(usuarioValidado.correo());
+        String token = jwtService.generarToken(usuarioValidado.correo(), usuarioValidado.rol());
         return new LoginResponse(token);
     }
 }

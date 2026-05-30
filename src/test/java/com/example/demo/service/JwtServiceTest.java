@@ -22,12 +22,12 @@ class JwtServiceTest {
 
     @BeforeEach
     void setUp() {
-        tokenValido = jwtService.generarToken(correoTest);
+        tokenValido = jwtService.generarToken(correoTest, "USER");
     }
 
     @Test
     void testGenerarToken() {
-        String token = jwtService.generarToken(correoTest);
+        String token = jwtService.generarToken(correoTest, "USER");
         assertTrue(token != null && !token.isEmpty(), "El token no debe ser nulo ni vacío");
     }
 
@@ -50,7 +50,7 @@ class JwtServiceTest {
 
     @Test
     void testTokenExpiraEnTiempoEstablecido() throws InterruptedException {
-        String token = jwtService.generarToken("test@example.com");
+        String token = jwtService.generarToken("test@example.com", "USER");
         assertTrue(jwtService.esValido(token), "El token debe ser válido al crearse");
     }
 }
