@@ -3,6 +3,11 @@ spring:
     import: ${SPRING_CONFIG_IMPORT:optional:configserver:http://localhost:8888}
   application:
     name: bff-back-for-frontend
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASS:guest}
 
 server:
   port: 8081
