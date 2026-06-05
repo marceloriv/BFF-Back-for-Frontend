@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import java.util.Enumeration;
+import com.example.demo.service.JwtService;
 
 /*
  * Archivo que hace las llamadas a la API Gateway para que los clientes
@@ -30,13 +31,16 @@ public class ApiGatewayClient {
 
     private final RestTemplate restTemplate;
     private final String apiGatewayUrl;
+    private final JwtService jwtService;
 
     public ApiGatewayClient(
             RestTemplate restTemplate,
-            @Value("${api.gateway.url}") String apiGatewayUrl
+            @Value("${api.gateway.url}") String apiGatewayUrl,
+            JwtService jwtService
     ) {
         this.restTemplate = restTemplate;
         this.apiGatewayUrl = apiGatewayUrl;
+        this.jwtService = jwtService;
     }
 
     // ── Sobrecargas convenientes que devuelven String ──────────────────────
@@ -145,9 +149,26 @@ public class ApiGatewayClient {
         String token = obtenerTokenActual();
         if (token != null) {
             headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+
+            // Inyectar headers de identidad extraídos del JWT validado por el BFF
+            // Estos headers son el contrato de identidad entre el BFF y los microservicios
+            try {
+                Long usuarioId = jwtService.extraerUsuarioId(token);
+                String rol = jwtService.extraerRol(token);
+                if (usuarioId != null) {
+                    headers.set("X-Usuario-Id", String.valueOf(usuarioId));
+                }
+                if (rol != null) {
+                    // X-Rol-Usuario-Id lleva el nombre del rol (String), no un Long
+                    headers.set("X-Rol-Usuario-Id", rol);
+                }
+            } catch (Exception e) {
+                // Si falla la extracción, continuamos sin estos headers
+            }
         }
 
-        // Propagar automáticamente las cabeceras personalizadas (X-Usuario-Id, X-Rol-Usuario-Id, X-Carrito-Id, etc.)
+        // Propagar adicionalmente las cabeceras personalizadas que vengan del frontend
+        // (X-Carrito-Id, X-Idempotency-Key, etc.) sin sobreescribir los que ya pusimos
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (attributes != null) {
             HttpServletRequest currentRequest = attributes.getRequest();
@@ -155,7 +176,8 @@ public class ApiGatewayClient {
             if (headerNames != null) {
                 while (headerNames.hasMoreElements()) {
                     String headerName = headerNames.nextElement();
-                    if (headerName.toLowerCase().startsWith("x-")) {
+                    if (headerName.toLowerCase().startsWith("x-")
+                            && headers.get(headerName) == null) { // no sobreescribir los del JWT
                         headers.set(headerName, currentRequest.getHeader(headerName));
                     }
                 }
