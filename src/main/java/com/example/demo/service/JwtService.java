@@ -8,61 +8,61 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
+/**
+ * Genera y valida tokens JWT.
+ * Formato original del BFF:
+ * - subject : correo del usuario
+ * - claim   : "rol"
+ * Sin issuer ni audience.
+ */
 @Service
-
 public class JwtService {
 
-    // la contraseña se pasa como variable de entorno, no se guarda en el código
-    // fuente
-    @Value("${jwt.secret}")
+    @Value("${jwt.secret:ticketti-secret-key-2024-for-jwt-signing-and-verification-only}")
     private String secret;
-    // permite decir cuanta duración va a tener el token, en este caso 15 min
-    private final long EXPIRATION = 1000 * 60 * 15; // 15 en milisegundos
+
+    private final long EXPIRATION = 1000L * 60 * 60 * 24; // 24 horas
 
     private SecretKey getKey() {
-
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
     public String generarToken(String correo, String rol) {
-        // cque va a generar y cuando va a generarlo
-        return Jwts.builder().subject(correo).claim("rol", rol).issuedAt(new Date()) // acá se coloca lo que se quiere
-                                                                                     // encriptar
-                .expiration(new Date(EXPIRATION + System.currentTimeMillis())) // se le dice que el token va a expirar
-                                                                               // // en 15 min
+        return Jwts.builder()
+                .subject(correo)
+                .claim("rol", rol)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION))
                 .signWith(getKey())
                 .compact();
-
     }
 
     public String extraerCorreo(String token) {
-        return Jwts.parser().verifyWith(getKey()).build()
-                .parseSignedClaims(token).getPayload().getSubject(); // se le dice que se va a extraer el correo del
-                                                                     // token
-
+        return getClaims(token).getSubject();
     }
 
     public String extraerRol(String token) {
-        return Jwts.parser().verifyWith(getKey()).build()
-                .parseSignedClaims(token).getPayload().get("rol", String.class); // se le dice que se va a extraer el
-                                                                                 // rol del
-                                                                                 // token
-
+        return getClaims(token).get("rol", String.class);
     }
 
     public boolean esValido(String token) {
-
         try {
-            extraerCorreo(token);
-            extraerRol(token);
-            return true; // si el token es válido, se devuelve true
+            Claims claims = getClaims(token);
+            return claims.getSubject() != null && !claims.getExpiration().before(new Date());
         } catch (Exception e) {
-            return false; // si el token no es válido, se devuelve false
+            return false;
         }
-
     }
 
+    private Claims getClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(getKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
 }
