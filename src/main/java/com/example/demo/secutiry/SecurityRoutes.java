@@ -8,14 +8,23 @@ final class SecurityRoutes {
 
     static final String[] PUBLIC_ROUTES = {
             "/auth/login",
-            "/api/v1/carrito/**"
+            "/api/v1/carrito/**",
+            "/api/v1/causas/activas",
+            "/api/v1/organizaciones/activas"
 
     };
-    // rutas protegidas por rol
+
+    // Spring Security evalúa las reglas en orden, de arriba hacia abajo,
+    // deteniéndose en la primera que coincide con la petición.
+    // Las rutas de donaciones, causas, organizaciones y notificaciones
+    // NO se incluyen aquí porque ya tienen reglas específicas definidas
+    // en SecurityConfig con hasRole/hasAnyRole por metodo HTTP.
+    // Si se agregaran aquí con solo .authenticated(), cualquier usuario
+    // logueado podría acceder, ignorando la restricción de rol.
+    //rutas protegidas por rol
     static final String[] PROTECTED_ROUTES = {
             "/api/v1/usuarios/**",
-            "/api/v1/eventos/**",
-            "/api/v1/donaciones/**",
-            "/api/v1/mensajeria/**"
+            "/api/v1/eventos/**"
+
     };
 }
