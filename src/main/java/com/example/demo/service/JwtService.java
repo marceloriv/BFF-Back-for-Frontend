@@ -22,7 +22,7 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
-    @Value("${jwt.secret:ticketti-secret-key-2024-for-jwt-signing-and-verification-only}")
+    @Value("${jwt.secret:clave-secreta-super-larga-de-minimo-32-caracteres}")
     private String secret;
 
     private final long EXPIRATION = 1000L * 60 * 60 * 24; // 24 horas
