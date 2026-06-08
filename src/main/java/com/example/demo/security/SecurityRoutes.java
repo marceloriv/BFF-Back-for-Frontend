@@ -1,4 +1,4 @@
-package com.example.demo.secutiry;
+package com.example.demo.security;
 
 final class SecurityRoutes {
 

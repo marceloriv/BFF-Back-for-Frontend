@@ -1,4 +1,4 @@
-package com.example.demo.secutiry;
+package com.example.demo.security;
 
 import java.io.IOException;
 
@@ -40,7 +40,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 // autenticación
 
                 String correo = servicio.extraerCorreo(token);
-                
+
                 String rol = servicio.extraerRol(token);
                 // se extrae el rol que viene dentro del jwt, se guarda en una variable y se agega a una lista para que spring Security pueda filtrar si es que el usuario tiene permiso para acceder a una ruta protegida
                 //ROLE_ = para que springSecurity reconozca el rol por conversión automatica
