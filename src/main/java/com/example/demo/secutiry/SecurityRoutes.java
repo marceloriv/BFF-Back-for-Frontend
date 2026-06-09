@@ -9,6 +9,7 @@ final class SecurityRoutes {
     static final String[] PUBLIC_ROUTES = {
             "/auth/login",
             "/api/v1/carrito/**"
+            
 
     };
     // rutas protegidas por rol
@@ -19,3 +20,4 @@ final class SecurityRoutes {
             "/api/v1/mensajeria/**"
     };
 }
+

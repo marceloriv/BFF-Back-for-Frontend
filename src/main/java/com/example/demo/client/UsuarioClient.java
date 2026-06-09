@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import com.example.demo.dto.usuario.ValidarCredencialesRequest;
 import com.example.demo.dto.usuario.ValidarCredencialesResponse;
 
+//cliente para el cmicroservicio de usuarios, delega a ApiGatewayClient para hacer las llamadas HTTP
 @Component
 public class UsuarioClient {
 

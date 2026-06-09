@@ -19,29 +19,33 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(SecurityRoutes.PUBLIC_ROUTES).permitAll()
 
-
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
+                        // Listar eventos debe ser público para que el home pueda mostrarlos
+                        .requestMatchers(HttpMethod.GET, "/api/v1/eventos/listarEventos").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/usuarios").hasAnyRole("ADMIN", "ADMINPLATAFORMA")
                         // Solo el admin de plataforma puede cambiar roles
                         .requestMatchers(HttpMethod.PUT, "/api/v1/usuarios/*/rol").hasRole("ADMINPLATAFORMA")
-                        //eventos
-                        .requestMatchers(HttpMethod.POST, "/api/v1/eventos").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/eventos").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/**").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
-                        //donaciones
-                        .requestMatchers(HttpMethod.POST, "/api/v1/donaciones").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/donaciones").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/donaciones/**").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
-                        //mensajería
+                        // eventos
+                        .requestMatchers(HttpMethod.POST, "/api/v1/eventos")
+                        .hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/eventos")
+                        .hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/**")
+                        .hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
+                        // donaciones
+                        .requestMatchers(HttpMethod.POST, "/api/v1/donaciones")
+                        .hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/donaciones")
+                        .hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/donaciones/**")
+                        .hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
+                        // mensajería
                         .requestMatchers(HttpMethod.POST, "/api/v1/mensajeria").hasRole("ADMIN")
-                    
-                    
+
                         .requestMatchers(SecurityRoutes.PROTECTED_ROUTES).authenticated()
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 .addFilterBefore(filtro, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
 }
-
