@@ -12,8 +12,9 @@ spring:
 server:
   port: 8081
 
-gateway:
-  base-url: ${GATEWAY_BASE_URL:http://localhost:8222}
+api:
+  gateway:
+    url: ${GATEWAY_BASE_URL:http://localhost:8222}
 
 jwt:
   secret: ${JWT_SECRET:clave-secreta-super-larga-de-minimo-32-caracteres}
