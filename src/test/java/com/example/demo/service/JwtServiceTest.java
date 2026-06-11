@@ -3,7 +3,6 @@ package com.example.demo.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +18,16 @@ class JwtServiceTest {
 
     private String tokenValido;
     private String correoTest = "test@example.com";
+    private Long usuarioIdTest ;
 
     @BeforeEach
     void setUp() {
-        tokenValido = jwtService.generarToken(correoTest, "USER");
+        tokenValido = jwtService.generarToken(correoTest, "USER", 42L);
     }
 
     @Test
     void testGenerarToken() {
-        String token = jwtService.generarToken(correoTest, "USER");
+        String token = jwtService.generarToken(correoTest, "USER", 42L);
         assertTrue(token != null && !token.isEmpty(), "El token no debe ser nulo ni vacío");
     }
 
@@ -50,7 +50,7 @@ class JwtServiceTest {
 
     @Test
     void testTokenExpiraEnTiempoEstablecido() throws InterruptedException {
-        String token = jwtService.generarToken("test@example.com", "USER");
+        String token = jwtService.generarToken("test@example.com", "USER", 42L);
         assertTrue(jwtService.esValido(token), "El token debe ser válido al crearse");
     }
 }

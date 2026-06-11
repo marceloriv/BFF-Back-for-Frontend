@@ -3,10 +3,20 @@ services:
     build: .
     container_name: bff-back-for-frontend
     restart: unless-stopped
+    networks:
+      - ticketti-network
     environment:
       SERVER_PORT: 8081
       SPRING_CONFIG_IMPORT: ${SPRING_CONFIG_IMPORT:-optional:configserver:http://host.docker.internal:8888}
       API_GATEWAY_URL: ${API_GATEWAY_URL:-http://host.docker.internal:8222}
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASS: ${RABBITMQ_PASS:-guest}
     ports:
       - "8081:8081"
+
+networks:
+  ticketti-network:
+    external: true
