@@ -75,18 +75,18 @@ public class SecurityConfig {
                         // ══════════════════════════════════════════════════════
                         // 5. MENSAJERÍA (ms-mensajeria)
 
+                        // Historial de notificaciones de un usuario:
+                        // COMPRADOR ve el suyo, ADMINPLATAFORMA ve cualquiera, CLIENTE ve el suyo
+                        .requestMatchers(HttpMethod.GET, "/api/v1/notificaciones/historial/**").permitAll()
+
+                        // Obtener notificación por ID: solo ADMINPLATAFORMA
+                        .requestMatchers(HttpMethod.GET, "/api/v1/notificaciones/obtener/**").hasRole("ADMINPLATAFORMA")
+
                         // Envíos manuales (reenvío de ticket, devolución, recordatorio, recomendación): solo ADMINPLATAFORMA
                         .requestMatchers(HttpMethod.POST, "/api/v1/notificaciones/**").hasRole("ADMINPLATAFORMA")
 
                         // Cancelar notificación pendiente: solo ADMINPLATAFORMA
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/notificaciones/cancelar/**").hasRole("ADMINPLATAFORMA")
-
-                        // Historial de notificaciones de un usuario:
-                        // COMPRADOR ve el suyo, ADMINPLATAFORMA ve cualquiera
-                        .requestMatchers(HttpMethod.GET, "/api/v1/notificaciones/historial/**").hasAnyRole("ADMINPLATAFORMA", "COMPRADOR")
-
-                        // Obtener notificación por ID: solo ADMINPLATAFORMA
-                        .requestMatchers(HttpMethod.GET, "/api/v1/notificaciones/obtener/**").hasRole("ADMINPLATAFORMA")
 
 
                         .requestMatchers(SecurityRoutes.PROTECTED_ROUTES).authenticated()
