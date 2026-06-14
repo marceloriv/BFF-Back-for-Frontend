@@ -27,6 +27,9 @@ public class SecurityConfig {
                         // ══════════════════════════════════════════════════════
                         // EVENTOS (ms-eventos)
                         .requestMatchers(HttpMethod.POST, "/api/v1/eventos").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/eventos").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/actualizarStock/**").hasAnyRole("CLIENTE", "ORGANIZADOR", "ADMINPLATAFORMA")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/restaurarStock/**").hasAnyRole("CLIENTE", "ORGANIZADOR", "ADMINPLATAFORMA")
                         
                         .requestMatchers(HttpMethod.GET, "/api/v1/eventos/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/*/estado").hasRole("ORGANIZADOR")                                   
