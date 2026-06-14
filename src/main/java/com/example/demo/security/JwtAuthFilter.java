@@ -49,13 +49,30 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 // se extrae el rol que viene dentro del jwt, se guarda en una variable y se agega a una lista para que spring Security pueda filtrar si es que el usuario tiene permiso para acceder a una ruta protegida
                 //ROLE_ = para que springSecurity reconozca el rol por conversión automatica
                 if (rol != null && !rol.isBlank()) {
+                    String cleanRol = rol.trim().toUpperCase();
+                    List<SimpleGrantedAuthority> authorities;
+                    if ("ADMINPLATAFORMA".equals(cleanRol)) {
+                        authorities = List.of(
+                            new SimpleGrantedAuthority("ROLE_ADMINPLATAFORMA"),
+                            new SimpleGrantedAuthority("ROLE_ORGANIZADOR"),
+                            new SimpleGrantedAuthority("ROLE_CLIENTE")
+                        );
+                    } else if ("ORGANIZADOR".equals(cleanRol)) {
+                        authorities = List.of(
+                            new SimpleGrantedAuthority("ROLE_ORGANIZADOR"),
+                            new SimpleGrantedAuthority("ROLE_CLIENTE")
+                        );
+                    } else {
+                        authorities = List.of(new SimpleGrantedAuthority("ROLE_" + cleanRol));
+                    }
+
                     UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                             correo,
                             token,   // guardamos el token raw para que ApiGatewayClient lo propague
-                            List.of(new SimpleGrantedAuthority("ROLE_" + rol.trim().toUpperCase())));
+                            authorities);
 
                     SecurityContextHolder.getContext().setAuthentication(auth);
-                    System.out.println("[JWT Filter] Authentication set for user: " + correo + " with role: ROLE_" + rol.trim().toUpperCase());
+                    System.out.println("[JWT Filter] Authentication set for user: " + correo + " with roles: " + authorities);
                 }
             } else {
                 System.out.println("[JWT Filter] Token is invalid");
