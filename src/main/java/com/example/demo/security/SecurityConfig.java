@@ -90,12 +90,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/donaciones/**")
                         .hasAnyRole("ADMINPLATAFORMA", "ORGANIZADOR")
 
-                        // ══════════════════════════════════════════════════════
-                        // 5. MENSAJERÍA (ms-mensajeria)
-
                         // Historial de notificaciones de un usuario:
-                        // COMPRADOR ve el suyo, ADMINPLATAFORMA ve cualquiera, CLIENTE ve el suyo
-                        .requestMatchers(HttpMethod.GET, "/api/v1/notificaciones/historial/**").permitAll()
+                        // Requiere autenticación por seguridad (evita fugas IDOR / BOLA)
+                        .requestMatchers(HttpMethod.GET, "/api/v1/notificaciones/historial/**").authenticated()
 
                         // Obtener notificación por ID: solo ADMINPLATAFORMA
                         .requestMatchers(HttpMethod.GET, "/api/v1/notificaciones/obtener/**").hasRole("ADMINPLATAFORMA")

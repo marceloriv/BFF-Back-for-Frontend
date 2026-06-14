@@ -9,12 +9,10 @@ final class SecurityRoutes {
     static final String[] PUBLIC_ROUTES = {
             "/auth/login",
             "/api/v1/carrito/**",
-            "/api/v1/Carrito/**",
             "/api/v1/causas/activas",
             "/api/v1/organizaciones/activas",
             "/api/v1/eventos",           // Listar eventos - público
-            "/api/v1/eventos/**",          // Detalle de evento - público
-            "/api/v1/Eventos/**"
+            "/api/v1/eventos/**"           // Detalle de evento - público
     };
 
     // Spring Security evalúa las reglas en orden, de arriba hacia abajo,
