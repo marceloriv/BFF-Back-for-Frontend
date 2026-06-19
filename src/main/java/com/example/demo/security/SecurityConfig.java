@@ -30,13 +30,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/eventos").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/actualizarStock/**").hasAnyRole("CLIENTE", "ORGANIZADOR", "ADMINPLATAFORMA")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/restaurarStock/**").hasAnyRole("CLIENTE", "ORGANIZADOR", "ADMINPLATAFORMA")
-                        
+
                         .requestMatchers(HttpMethod.GET, "/api/v1/eventos/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/*/estado").hasRole("ORGANIZADOR")                                   
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/*/estado").hasRole("ORGANIZADOR")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/**").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/eventos/**").hasRole("ADMINPLATAFORMA")
 
-                        // Stock eventos 
+                        // Stock eventos
                         .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/actualizarStock/*/*").hasRole("ADMINPLATAFORMA")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/restaurarStock/*/*").hasRole("ADMINPLATAFORMA")
                         .requestMatchers(HttpMethod.GET, "/api/v1/eventos/stock/*").hasRole("ADMINPLATAFORMA")
@@ -104,6 +104,11 @@ public class SecurityConfig {
                         // Cancelar notificación pendiente: solo ADMINPLATAFORMA
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/notificaciones/cancelar/**")
                         .hasRole("ADMINPLATAFORMA")
+
+                        // ══════════════════════════════════════════════════════
+                        // CARRITO (ms-carrito)
+                        .requestMatchers("/api/v1/Carrito/**").permitAll()
+                        .requestMatchers("/api/v1/carrito/**").permitAll()
 
                         .requestMatchers(SecurityRoutes.PROTECTED_ROUTES).authenticated()
                         .anyRequest().authenticated())

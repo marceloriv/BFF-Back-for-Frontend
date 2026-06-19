@@ -1,6 +1,7 @@
 package com.example.demo.security;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,24 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private JwtService servicio;
+
+    // Rutas públicas que no requieren validación de JWT
+    private static final List<String> PUBLIC_ROUTES = Arrays.asList(
+        "/api/v1/Carrito/",
+        "/api/v1/carrito/",
+        "/api/v1/eventos",
+        "/api/v1/Eventos",
+        "/api/v1/causas/activas",
+        "/api/v1/organizaciones/activas",
+        "/api/v1/usuarios",
+        "/auth/"
+    );
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return PUBLIC_ROUTES.stream().anyMatch(path::startsWith);
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
