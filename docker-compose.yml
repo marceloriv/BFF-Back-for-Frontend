@@ -3,13 +3,6 @@ services:
     build: .
     container_name: bff-back-for-frontend
     restart: unless-stopped
-    depends_on:
-      config-server:
-        condition: service_healthy
-      discovery-server:
-        condition: service_healthy
-      api-gateway:
-        condition: service_healthy
     networks:
       - ticketti-network
     environment:
