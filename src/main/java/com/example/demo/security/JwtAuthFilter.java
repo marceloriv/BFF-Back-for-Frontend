@@ -31,7 +31,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         "/api/v1/eventos",
         "/api/v1/Eventos",
         "/api/v1/causas/activas",
-        "/api/v1/organizaciones/activas",
+        "/api/v1/organizaciones",
         "/api/v1/usuarios",
         "/auth/"
     );

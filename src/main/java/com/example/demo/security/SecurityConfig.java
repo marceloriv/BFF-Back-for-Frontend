@@ -60,6 +60,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/organizaciones/**").hasRole("ADMINPLATAFORMA")
 
                         // Consultar organizaciones: ADMINPLATAFORMA ve todas Organizador las activas
+                        .requestMatchers(HttpMethod.GET, "/api/v1/organizaciones").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/organizaciones/").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/organizaciones/**")
                         .hasAnyRole("ADMINPLATAFORMA", "ORGANIZADOR")
 
@@ -76,6 +78,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/causas/organizacion/**")
                         .hasAnyRole("ADMINPLATAFORMA", "ORGANIZADOR")
 
+                        .requestMatchers(HttpMethod.GET, "/api/v1/causas/activas").permitAll()
                         // Buscar causa por ID: ADMINPLATAFORMA y ORGANIZADOR
                         .requestMatchers(HttpMethod.GET, "/api/v1/causas/**")
                         .hasAnyRole("ADMINPLATAFORMA", "ORGANIZADOR")
