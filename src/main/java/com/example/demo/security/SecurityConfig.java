@@ -110,8 +110,17 @@ public class SecurityConfig {
 
                         // ══════════════════════════════════════════════════════
                         // CARRITO (ms-carrito)
-                        .requestMatchers("/api/v1/Carrito/**").permitAll()
-                        .requestMatchers("/api/v1/carrito/**").permitAll()
+                        // Solo creación de carrito es pública (guest cart)
+                        .requestMatchers(HttpMethod.POST, "/api/v1/Carrito/crear").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/carrito/crear").permitAll()
+                        // Todo lo demás requiere autenticación
+                        .requestMatchers("/api/v1/Carrito/**").authenticated()
+                        .requestMatchers("/api/v1/carrito/**").authenticated()
+
+                        // ══════════════════════════════════════════════════════
+                        // USUARIOS (ms-usuarios) — rutas que requieren auth
+                        .requestMatchers(HttpMethod.GET, "/api/v1/usuarios/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/usuarios/**").authenticated()
 
                         .requestMatchers(SecurityRoutes.PROTECTED_ROUTES).authenticated()
                         .anyRequest().authenticated())

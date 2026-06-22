@@ -7,14 +7,14 @@ services:
       - ticketti-network
     environment:
       SERVER_PORT: 8081
-      SPRING_CONFIG_IMPORT: ${SPRING_CONFIG_IMPORT:-optional:configserver:http://config-server:8888}
-      API_GATEWAY_URL: ${API_GATEWAY_URL:-http://api-gateway:8222}
-      JWT_SECRET: ${JWT_SECRET:-clave-secreta-super-larga-de-minimo-32-caracteres}
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
-      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
-      RABBITMQ_PASS: ${RABBITMQ_PASS:-guest}
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-server:8761/eureka/
+      SPRING_CONFIG_IMPORT: ${SPRING_CONFIG_IMPORT}
+      API_GATEWAY_URL: ${API_GATEWAY_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      RABBITMQ_HOST: ${RABBITMQ_HOST}
+      RABBITMQ_PORT: ${RABBITMQ_PORT}
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASS: ${RABBITMQ_PASS}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
     ports:
       - "8081:8081"
 
