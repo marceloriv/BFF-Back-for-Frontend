@@ -22,7 +22,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/usuarios").hasAnyRole("ADMIN", "ADMINPLATAFORMA")
                         // Solo el admin de plataforma puede cambiar roles
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/usuarios/*/rol").hasRole("ADMINPLATAFORMA")
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/usuarios/*/rol").hasRole("ADMINPLATAFORMA")
 
                         // ══════════════════════════════════════════════════════
                         // EVENTOS (ms-eventos)
@@ -110,10 +110,7 @@ public class SecurityConfig {
 
                         // ══════════════════════════════════════════════════════
                         // CARRITO (ms-carrito)
-                        // Solo creación de carrito es pública (guest cart)
-                        .requestMatchers(HttpMethod.POST, "/api/v1/Carrito/crear").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/carrito/crear").permitAll()
-                        // Todo lo demás requiere autenticación
+                        // Todo requiere autenticación (incluido crear, para capturar usuarioId del JWT)
                         .requestMatchers("/api/v1/Carrito/**").authenticated()
                         .requestMatchers("/api/v1/carrito/**").authenticated()
 

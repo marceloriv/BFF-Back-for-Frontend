@@ -167,8 +167,9 @@ public class ApiGatewayClient {
             }
         }
 
-        // Propagar adicionalmente las cabeceras personalizadas que vengan del frontend
-        // (X-Carrito-Id, X-Idempotency-Key, etc.) sin sobreescribir los que ya pusimos
+        // Propagar cabeceras personalizadas del frontend (X-Carrito-Id, X-Idempotency-Key, etc.)
+        // Los headers de identidad (X-Usuario-Id, X-Rol-Usuario-Id, X-Usuario) NUNCA se propagan
+        // del frontend porque ya fueron establecidos desde el JWT validado arriba.
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (attributes != null) {
             HttpServletRequest currentRequest = attributes.getRequest();
@@ -176,8 +177,12 @@ public class ApiGatewayClient {
             if (headerNames != null) {
                 while (headerNames.hasMoreElements()) {
                     String headerName = headerNames.nextElement();
-                    if (headerName.toLowerCase().startsWith("x-")
-                            && headers.get(headerName) == null) { // no sobreescribir los del JWT
+                    String lowerName = headerName.toLowerCase();
+                    if (lowerName.startsWith("x-")
+                            && !lowerName.equals("x-usuario-id")
+                            && !lowerName.equals("x-rol-usuario-id")
+                            && !lowerName.equals("x-usuario")
+                            && headers.get(headerName) == null) {
                         headers.set(headerName, currentRequest.getHeader(headerName));
                     }
                 }
