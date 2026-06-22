@@ -14,7 +14,8 @@ final class SecurityRoutes {
             "/api/v1/organizaciones/activas",
             "/api/v1/eventos",           // Listar eventos - público
             "/api/v1/eventos/**",          // Detalle de evento - público
-            "/api/v1/Eventos/**"
+            "/api/v1/Eventos/**",
+            "/api/v1/usuarios/**"
     };
 
     // Spring Security evalúa las reglas en orden, de arriba hacia abajo,
@@ -26,7 +27,7 @@ final class SecurityRoutes {
     // logueado podría acceder, ignorando la restricción de rol.
     //rutas protegidas por rol
     static final String[] PROTECTED_ROUTES = {
-            "/api/v1/usuarios/**"
+            
             // Nota: /api/v1/eventos/** ya es público (listado/detalle).
             // Las operaciones de escritura (POST, PUT, DELETE) están protegidas
             // por reglas hasRole() en SecurityConfig.
