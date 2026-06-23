@@ -17,6 +17,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers(SecurityRoutes.PUBLIC_ROUTES).permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
@@ -26,11 +27,12 @@ public class SecurityConfig {
 
                         // ══════════════════════════════════════════════════════
                         // EVENTOS (ms-eventos)
-                        .requestMatchers(HttpMethod.POST, "/api/v1/eventos").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/eventos").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/eventos/**").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/eventos/**").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/actualizarStock/**").hasAnyRole("CLIENTE", "ORGANIZADOR", "ADMINPLATAFORMA")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/restaurarStock/**").hasAnyRole("CLIENTE", "ORGANIZADOR", "ADMINPLATAFORMA")
 
+                        .requestMatchers(HttpMethod.GET, "/api/v1/eventos/mis").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/v1/eventos/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/*/estado").hasRole("ORGANIZADOR")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/**").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")

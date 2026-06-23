@@ -27,8 +27,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private static final List<String> PUBLIC_ROUTES = Arrays.asList(
         "/auth/",
-        "/api/v1/eventos",
-        "/api/v1/Eventos",
         "/api/v1/causas/activas",
         "/api/v1/organizaciones"
     );
@@ -36,7 +34,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return PUBLIC_ROUTES.stream().anyMatch(path::startsWith);
+        return PUBLIC_ROUTES.stream().anyMatch(route ->
+            route.endsWith("/") ? path.startsWith(route) : path.equals(route)
+        );
     }
 
     @Override
