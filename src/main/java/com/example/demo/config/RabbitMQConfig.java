@@ -14,6 +14,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
+    //BFF maneja todas las colas y como viajan a través de las networks, 
+    
 
     public static final String TICKETTI_EXCHANGE = "ticketti.exchange";
     public static final String EVENTOS_EXCHANGE = "eventos.exchange";
@@ -27,7 +29,7 @@ public class RabbitMQConfig {
     public static final String ROUTING_KEY_COMPRA_REVERTIDA = "compra.revertida";
     public static final String ROUTING_KEY_MENSAJERIA = "pago.aprobado";
     public static final String ROUTING_KEY_EVENTOS = "eventos.exchange";
-
+    //
     @Bean
     public DirectExchange tickettiExchange() {
         return new DirectExchange(TICKETTI_EXCHANGE, true, false);
