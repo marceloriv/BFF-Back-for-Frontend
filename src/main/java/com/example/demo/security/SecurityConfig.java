@@ -17,26 +17,28 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers(SecurityRoutes.PUBLIC_ROUTES).permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/usuarios").hasAnyRole("ADMIN", "ADMINPLATAFORMA")
                         // Solo el admin de plataforma puede cambiar roles
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/usuarios/*/rol").hasRole("ADMINPLATAFORMA")
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/usuarios/*/rol").hasRole("ADMINPLATAFORMA")
 
                         // ══════════════════════════════════════════════════════
                         // EVENTOS (ms-eventos)
-                        .requestMatchers(HttpMethod.POST, "/api/v1/eventos").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/eventos").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/eventos/**").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/eventos/**").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/actualizarStock/**").hasAnyRole("CLIENTE", "ORGANIZADOR", "ADMINPLATAFORMA")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/restaurarStock/**").hasAnyRole("CLIENTE", "ORGANIZADOR", "ADMINPLATAFORMA")
-                        
+
+                        .requestMatchers(HttpMethod.GET, "/api/v1/eventos/mis").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/v1/eventos/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/*/estado").hasRole("ORGANIZADOR")                                   
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/*/estado").hasRole("ORGANIZADOR")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/**").hasAnyRole("ORGANIZADOR", "ADMINPLATAFORMA")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/eventos/**").hasRole("ADMINPLATAFORMA")
 
-                        // Stock eventos 
+                        // Stock eventos
                         .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/actualizarStock/*/*").hasRole("ADMINPLATAFORMA")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/eventos/restaurarStock/*/*").hasRole("ADMINPLATAFORMA")
                         .requestMatchers(HttpMethod.GET, "/api/v1/eventos/stock/*").hasRole("ADMINPLATAFORMA")
@@ -60,6 +62,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/organizaciones/**").hasRole("ADMINPLATAFORMA")
 
                         // Consultar organizaciones: ADMINPLATAFORMA ve todas Organizador las activas
+                        .requestMatchers(HttpMethod.GET, "/api/v1/organizaciones").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/organizaciones/").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/organizaciones/**")
                         .hasAnyRole("ADMINPLATAFORMA", "ORGANIZADOR")
 
@@ -76,6 +80,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/causas/organizacion/**")
                         .hasAnyRole("ADMINPLATAFORMA", "ORGANIZADOR")
 
+                        .requestMatchers(HttpMethod.GET, "/api/v1/causas/activas").permitAll()
                         // Buscar causa por ID: ADMINPLATAFORMA y ORGANIZADOR
                         .requestMatchers(HttpMethod.GET, "/api/v1/causas/**")
                         .hasAnyRole("ADMINPLATAFORMA", "ORGANIZADOR")
@@ -90,12 +95,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/donaciones/**")
                         .hasAnyRole("ADMINPLATAFORMA", "ORGANIZADOR")
 
-                        // ══════════════════════════════════════════════════════
-                        // 5. MENSAJERÍA (ms-mensajeria)
-
                         // Historial de notificaciones de un usuario:
-                        // COMPRADOR ve el suyo, ADMINPLATAFORMA ve cualquiera, CLIENTE ve el suyo
-                        .requestMatchers(HttpMethod.GET, "/api/v1/notificaciones/historial/**").permitAll()
+                        // Requiere autenticación por seguridad (evita fugas IDOR / BOLA)
+                        .requestMatchers(HttpMethod.GET, "/api/v1/notificaciones/historial/**").authenticated()
 
                         // Obtener notificación por ID: solo ADMINPLATAFORMA
                         .requestMatchers(HttpMethod.GET, "/api/v1/notificaciones/obtener/**").hasRole("ADMINPLATAFORMA")
@@ -107,6 +109,17 @@ public class SecurityConfig {
                         // Cancelar notificación pendiente: solo ADMINPLATAFORMA
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/notificaciones/cancelar/**")
                         .hasRole("ADMINPLATAFORMA")
+
+                        // ══════════════════════════════════════════════════════
+                        // CARRITO (ms-carrito)
+                        // Todo requiere autenticación (incluido crear, para capturar usuarioId del JWT)
+                        .requestMatchers("/api/v1/Carrito/**").authenticated()
+                        .requestMatchers("/api/v1/carrito/**").authenticated()
+
+                        // ══════════════════════════════════════════════════════
+                        // USUARIOS (ms-usuarios) — rutas que requieren auth
+                        .requestMatchers(HttpMethod.GET, "/api/v1/usuarios/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/usuarios/**").authenticated()
 
                         .requestMatchers(SecurityRoutes.PROTECTED_ROUTES).authenticated()
                         .anyRequest().authenticated())

@@ -1,6 +1,7 @@
 package com.example.demo.security;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,38 +17,44 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
-
+@Slf4j
 public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private JwtService servicio;
+
+    private static final List<String> PUBLIC_ROUTES = Arrays.asList(
+        "/auth/",
+        "/api/v1/causas/activas",
+        "/api/v1/organizaciones"
+    );
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return PUBLIC_ROUTES.stream().anyMatch(route ->
+            route.endsWith("/") ? path.startsWith(route) : path.equals(route)
+        );
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
         String header = request.getHeader("Authorization");
-        System.out.println("[JWT Filter] Authorization header: " + (header != null ? header.substring(0, Math.min(20, header.length())) + "..." : "null"));
+        log.debug("Authorization header: {}", header != null ? header.substring(0, Math.min(20, header.length())) + "..." : "null");
 
         if (header != null && header.startsWith("Bearer ")) {
-
             String token = header.substring(7);
-            System.out.println("[JWT Filter] Token extracted, validating...");
+            log.debug("Token extracted, validating...");
+
             if (servicio.esValido(token)) {
-                System.out.println("[JWT Filter] Token is valid");
-                // Si el token es válido, se puede configurar la autenticación en el contexto de
-                // seguridad
-                // Aquí podrías extraer el username y roles del token y establecer la
-                // autenticación
-
                 String correo = servicio.extraerCorreo(token);
-                System.out.println("[JWT Filter] Correo extraído: " + correo);
-
                 String rol = servicio.extraerRol(token);
-                System.out.println("[JWT Filter] Rol extraído: " + rol);
-                // se extrae el rol que viene dentro del jwt, se guarda en una variable y se agega a una lista para que spring Security pueda filtrar si es que el usuario tiene permiso para acceder a una ruta protegida
-                //ROLE_ = para que springSecurity reconozca el rol por conversión automatica
+                log.debug("Token valid. User: {}, Role: {}", correo, rol);
+
                 if (rol != null && !rol.isBlank()) {
                     String cleanRol = rol.trim().toUpperCase();
                     List<SimpleGrantedAuthority> authorities;
@@ -68,21 +75,19 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                     UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                             correo,
-                            token,   // guardamos el token raw para que ApiGatewayClient lo propague
+                            token,
                             authorities);
 
                     SecurityContextHolder.getContext().setAuthentication(auth);
-                    System.out.println("[JWT Filter] Authentication set for user: " + correo + " with roles: " + authorities);
+                    log.debug("Authentication set for user: {} with roles: {}", correo, authorities);
                 }
             } else {
-                System.out.println("[JWT Filter] Token is invalid");
+                log.warn("Invalid JWT token received");
             }
-
         } else {
-            System.out.println("[JWT Filter] No Authorization header or does not start with Bearer");
+            log.debug("No Authorization header or does not start with Bearer");
         }
 
         filterChain.doFilter(request, response);
     }
-
 }
