@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+// Controlador que actúa como proxy para reenviar las solicitudes a la API Gateway
 @RestController
 @RequestMapping("/api")
 public class GatawayProxiController {

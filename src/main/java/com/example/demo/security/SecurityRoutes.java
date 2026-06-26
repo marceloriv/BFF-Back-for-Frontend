@@ -6,28 +6,47 @@ final class SecurityRoutes {
     private SecurityRoutes() {
     }
 
+    // Rutas realmente públicas. que un usuario puede ver sin iniciar sesión
+    // Esta clase no distingue método HTTP, solo la ruta.
     static final String[] PUBLIC_ROUTES = {
+            // Usuarios 
             "/auth/login",
+
+            // Causas sociales públicas
             "/api/v1/causas/activas",
-            "/api/v1/organizaciones/activas",
-            "/api/v1/eventos",           // Listar eventos - público
-            "/api/v1/eventos/**",          // Detalle de evento - público
-            "/api/v1/Eventos/**",
-            "/api/v1/usuarios/**"
+
     };
 
-    // Spring Security evalúa las reglas en orden, de arriba hacia abajo,
-    // deteniéndose en la primera que coincide con la petición.
-    // Las rutas de donaciones, causas, organizaciones y notificaciones
-    // NO se incluyen aquí porque ya tienen reglas específicas definidas
-    // en SecurityConfig con hasRole/hasAnyRole por metodo HTTP.
-    // Si se agregaran aquí con solo .authenticated(), cualquier usuario
-    // logueado podría acceder, ignorando la restricción de rol.
-    //rutas protegidas por rol
+    // Rutas generales protegidas.
+    // Sirven como respaldo para que todo microservicio quede privado por defecto.
+    // Las reglas más específicas por rol van en SecurityConfig ANTES de usar este arreglo.
     static final String[] PROTECTED_ROUTES = {
-            
-            // Nota: /api/v1/eventos/** ya es público (listado/detalle).
-            // Las operaciones de escritura (POST, PUT, DELETE) están protegidas
-            // por reglas hasRole() en SecurityConfig.
+            // Usuarios
+            "/api/v1/usuarios",
+            "/api/v1/usuarios/**",
+
+            // Eventos
+            "/api/v1/eventos",
+            "/api/v1/eventos/**",
+            "/api/v1/Eventos/**",
+
+            // Organizaciones
+            "/api/v1/organizaciones",
+            "/api/v1/organizaciones/",
+            "/api/v1/organizaciones/**",
+
+            // Causas sociales
+            "/api/v1/causas",
+            "/api/v1/causas/**",
+
+            // Donaciones
+            "/api/v1/donaciones/**",
+
+            // Notificaciones / mensajería
+            "/api/v1/notificaciones/**",
+
+            // Carrito
+            "/api/v1/carrito/**",
+            "/api/v1/Carrito/**"
     };
 }
