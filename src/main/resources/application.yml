@@ -6,23 +6,24 @@ spring:
   rabbitmq:
     host: ${RABBITMQ_HOST:localhost}
     port: ${RABBITMQ_PORT:5672}
-    username: ${RABBITMQ_USER:guest}
-    password: ${RABBITMQ_PASS:guest}
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASS}
 
 server:
   port: 8081
 
-gateway:
-  base-url: ${GATEWAY_BASE_URL:http://localhost:8222}
+api:
+  gateway:
+    url: ${API_GATEWAY_URL:http://localhost:8222}
 
 jwt:
-  secret: ${JWT_SECRET:clave-secreta-super-larga-de-minimo-32-caracteres}
+  secret: ${JWT_SECRET}
 
 management:
   endpoints:
     web:
       exposure:
-        include: health, info, metrics, prometheus, threaddump
+        include: health, info, metrics, prometheus
   endpoint:
     health:
       show-details: always

@@ -6,19 +6,47 @@ final class SecurityRoutes {
     private SecurityRoutes() {
     }
 
+    // Rutas realmente públicas. que un usuario puede ver sin iniciar sesión
+    // Esta clase no distingue método HTTP, solo la ruta.
     static final String[] PUBLIC_ROUTES = {
+            // Usuarios 
             "/auth/login",
-            "/api/v1/carrito/**",
-            "/api/v1/Carrito/**",
+
+            // Causas sociales públicas
             "/api/v1/causas/activas",
-            "/api/v1/organizaciones/activas",
-            "/api/v1/eventos",           // Listar eventos - público
-            "/api/v1/eventos/**",          // Detalle de evento - público
-            "/api/v1/Eventos/**"
+
     };
 
+    // Rutas generales protegidas.
+    // Sirven como respaldo para que todo microservicio quede privado por defecto.
+    // Las reglas más específicas por rol van en SecurityConfig ANTES de usar este arreglo.
     static final String[] PROTECTED_ROUTES = {
-            "/api/v1/usuarios/**"
-  
+            // Usuarios
+            "/api/v1/usuarios",
+            "/api/v1/usuarios/**",
+
+            // Eventos
+            "/api/v1/eventos",
+            "/api/v1/eventos/**",
+            "/api/v1/Eventos/**",
+
+            // Organizaciones
+            "/api/v1/organizaciones",
+            "/api/v1/organizaciones/",
+            "/api/v1/organizaciones/**",
+
+            // Causas sociales
+            "/api/v1/causas",
+            "/api/v1/causas/**",
+
+            // Donaciones
+            "/api/v1/donaciones/**",
+
+            // Notificaciones / mensajería
+            "/api/v1/notificaciones/**",
+
+            // Carrito
+            "/api/v1/carrito/**",
+            "/api/v1/Carrito/**"
     };
 }
