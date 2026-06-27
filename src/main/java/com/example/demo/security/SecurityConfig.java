@@ -26,13 +26,33 @@ public class SecurityConfig {
                         // Crear usuario: POST público (registro)
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
 
-                        // Consultar usuarios: GET requiere autenticación y roles específicos
-                        .requestMatchers(HttpMethod.GET, "/api/v1/usuarios").hasAnyRole("ADMIN", "ADMINPLATAFORMA")
+                        // Login público
+                        .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/login").permitAll()
+
+                        // Validar credenciales público
+                        .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/validar-credenciales").permitAll()
+
+                        // Listar todos los usuarios: solo ADMIN o ADMINPLATAFORMA
+                        .requestMatchers(HttpMethod.GET, "/api/v1/usuarios")
+                        .hasAnyRole("ADMIN", "ADMINPLATAFORMA")
+
+
                         // Solo el admin de plataforma puede cambiar roles
-                        .requestMatchers(HttpMethod.PATCH, "/api/v1/usuarios/*/rol").hasRole("ADMINPLATAFORMA")
-                        // USUARIOS (ms-usuarios) — rutas que requieren auth
-                        .requestMatchers(HttpMethod.GET, "/api/v1/usuarios/**").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/usuarios/**").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/usuarios/*/rol")
+                        .hasRole("ADMINPLATAFORMA")
+
+                        // Eliminar usuario:
+
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/usuarios/*")
+                        .authenticated()
+
+                        // Obtener usuario por ID: requiere estar autenticado
+                        .requestMatchers(HttpMethod.GET, "/api/v1/usuarios/*")
+                        .authenticated()
+
+                        // Actualizar usuario por ID: requiere estar autenticado
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/usuarios/*")
+                        .authenticated()
 
                         // ══════════════════════════════════════════════════════
                         // EVENTOS (ms-eventos)
@@ -135,7 +155,7 @@ public class SecurityConfig {
 
                         // ══════════════════════════════════════════════════════
                         // CARRITO (ms-carrito)
-                        
+
                         // Rutas que requieren autenticación
                         .requestMatchers(HttpMethod.POST, "/api/v1/Carrito/webhooks/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/v1/Carrito/checkout/**").authenticated()
