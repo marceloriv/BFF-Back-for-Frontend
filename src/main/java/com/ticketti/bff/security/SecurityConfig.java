@@ -148,6 +148,9 @@ public class SecurityConfig {
                         // Obtener notificación por ID: solo ADMINPLATAFORMA
                         .requestMatchers(HttpMethod.GET, "/api/v1/notificaciones/obtener/**").hasRole("ADMINPLATAFORMA")
 
+                        // Formulario de contacto público
+                        .requestMatchers(HttpMethod.POST, "/api/v1/notificaciones/contacto").permitAll()
+
                         // Envíos manuales (reenvío de ticket, devolución, recordatorio, recomendación):
                         // solo ADMINPLATAFORMA
                         .requestMatchers(HttpMethod.POST, "/api/v1/notificaciones/**").hasRole("ADMINPLATAFORMA")
