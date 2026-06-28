@@ -129,6 +129,9 @@ public class SecurityConfig {
                         // DONACIONES (ms-donaciones) MSDonaciones NO recibe POST desde el BFF.
                         // Las donaciones se crean internamente cuando RabbitMQ entrega el evento
                         // "pago.confirmado" desde MSCarrito.
+
+                        // Mis donaciones: accesible para cualquier usuario autenticado (CLIENTE incluido)
+                        .requestMatchers(HttpMethod.GET, "/api/v1/donaciones/me").authenticated()
                         // Reportes de donaciones: ADMINPLATAFORMA ve todo,
                         // ORGANIZADOR ve solo las de las causas sociales asociadas a sus eventos
                         // (el filtrado por org se hace dentro del microservicio)
@@ -144,6 +147,9 @@ public class SecurityConfig {
 
                         // Obtener notificación por ID: solo ADMINPLATAFORMA
                         .requestMatchers(HttpMethod.GET, "/api/v1/notificaciones/obtener/**").hasRole("ADMINPLATAFORMA")
+
+                        // Formulario de contacto público
+                        .requestMatchers(HttpMethod.POST, "/api/v1/notificaciones/contacto").permitAll()
 
                         // Envíos manuales (reenvío de ticket, devolución, recordatorio, recomendación):
                         // solo ADMINPLATAFORMA
