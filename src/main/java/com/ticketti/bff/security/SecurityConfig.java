@@ -25,17 +25,19 @@ public class SecurityConfig {
 
                         // Crear usuario: POST público (registro)
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/").permitAll()
 
                         // Login público
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/login/").permitAll()
 
                         // Validar credenciales público
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/validar-credenciales").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/validar-credenciales/").permitAll()
 
                         // Listar todos los usuarios: solo ADMIN o ADMINPLATAFORMA
                         .requestMatchers(HttpMethod.GET, "/api/v1/usuarios")
                         .hasAnyRole("ADMIN", "ADMINPLATAFORMA")
-
 
                         // Solo el admin de plataforma puede cambiar roles
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/usuarios/*/rol")
@@ -130,7 +132,8 @@ public class SecurityConfig {
                         // Las donaciones se crean internamente cuando RabbitMQ entrega el evento
                         // "pago.confirmado" desde MSCarrito.
 
-                        // Mis donaciones: accesible para cualquier usuario autenticado (CLIENTE incluido)
+                        // Mis donaciones: accesible para cualquier usuario autenticado (CLIENTE
+                        // incluido)
                         .requestMatchers(HttpMethod.GET, "/api/v1/donaciones/me").authenticated()
                         // Reportes de donaciones: ADMINPLATAFORMA ve todo,
                         // ORGANIZADOR ve solo las de las causas sociales asociadas a sus eventos
