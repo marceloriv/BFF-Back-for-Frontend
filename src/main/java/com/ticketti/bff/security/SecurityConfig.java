@@ -111,6 +111,12 @@ public class SecurityConfig {
                         // (PUBLICO ) Consultar causas sociales activas:
                         .requestMatchers(HttpMethod.GET, "/api/v1/causas/activas").permitAll()
 
+                        // (PUBLICO ) Detalle de una causa por ID: necesario para mostrar
+                        // la causa vinculada en DetalleEvento y auto-seleccionarla en el
+                        // carrito. La causa individual (nombre, org, objetivo) no es info
+                        // sensible — es tan pública como el listado de activas.
+                        .requestMatchers(HttpMethod.GET, "/api/v1/causas/*").permitAll()
+
                         // Crear causa: ORGANIZADOR (pendiente) o ADMINPLATAFORMA (activa)
                         .requestMatchers(HttpMethod.POST, "/api/v1/causas").hasAnyRole("ADMINPLATAFORMA", "ORGANIZADOR")
 
@@ -121,7 +127,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/causas/organizacion/**")
                         .hasAnyRole("ADMINPLATAFORMA", "ORGANIZADOR")
 
-                        // Buscar causa por ID: ADMINPLATAFORMA y ORGANIZADOR
+                        // Listar todas (admin): ADMINPLATAFORMA y ORGANIZADOR
                         .requestMatchers(HttpMethod.GET, "/api/v1/causas/**")
                         .hasAnyRole("ADMINPLATAFORMA", "ORGANIZADOR")
 
