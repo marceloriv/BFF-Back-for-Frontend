@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
@@ -61,7 +62,7 @@ public class ApiGatewayClient {
 
     /** GET genérico. Propaga el JWT del usuario autenticado. */
     public <T> T get(String ruta, Class<T> responseType) {
-        HttpHeaders headers = buildHeaders();
+        HttpHeaders headers = buildHeaders(MediaType.APPLICATION_JSON);
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
         try {
@@ -86,6 +87,34 @@ public class ApiGatewayClient {
         return ejecutarConBody(HttpMethod.POST, ruta, body, responseType);
     }
 
+    /**
+     * POST multipart/form-data (subida de archivos). No fuerza Content-Type:
+     * application/json como el resto de los métodos — el body es un
+     * MultiValueMap con partes de archivo (Resource) y campos de texto, y
+     * RestTemplate genera el Content-Type multipart/form-data con el
+     * boundary correcto automáticamente a partir de su tipo.
+     */
+    public String postMultipart(String ruta, MultiValueMap<String, Object> body) {
+        HttpHeaders headers = buildHeaders(null);
+        HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(body, headers);
+
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    construirUrl(ruta),
+                    HttpMethod.POST,
+                    entity,
+                    String.class
+            );
+            return response.getBody();
+
+        } catch (RestClientResponseException e) {
+            throw e;
+        } catch (RestClientException e) {
+            throw new RestClientException(
+                    String.format("ApiGateway error calling %s: %s", construirUrl(ruta), e.getMessage()), e);
+        }
+    }
+
     /** PUT genérico. Propaga el JWT del usuario autenticado. */
     public <T> T put(String ruta, Object body, Class<T> responseType) {
         return ejecutarConBody(HttpMethod.PUT, ruta, body, responseType);
@@ -93,7 +122,7 @@ public class ApiGatewayClient {
 
     /** DELETE. Propaga el JWT del usuario autenticado. */
     public String delete(String ruta) {
-        HttpHeaders headers = buildHeaders();
+        HttpHeaders headers = buildHeaders(MediaType.APPLICATION_JSON);
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
         try {
@@ -116,7 +145,7 @@ public class ApiGatewayClient {
     // ── Internos ───────────────────────────────────────────────────────────
 
     private <T> T ejecutarConBody(HttpMethod method, String ruta, Object body, Class<T> responseType) {
-        HttpHeaders headers = buildHeaders();
+        HttpHeaders headers = buildHeaders(MediaType.APPLICATION_JSON);
         HttpEntity<Object> entity = new HttpEntity<>(body, headers);
 
         try {
@@ -137,13 +166,20 @@ public class ApiGatewayClient {
     }
 
     /**
-     * Construye los headers base incluyendo Content-Type y,
-     * si existe una autenticación activa en el SecurityContext,
-     * el header Authorization con el JWT original del usuario.
+     * Construye los headers base y, si existe una autenticación activa en
+     * el SecurityContext, el header Authorization con el JWT original del
+     * usuario.
+     *
+     * @param contentType Content-Type a fijar, o {@code null} para dejar
+     *                     que RestTemplate lo determine a partir del tipo
+     *                     del body (necesario para multipart/form-data,
+     *                     que requiere un boundary generado dinámicamente).
      */
-    private HttpHeaders buildHeaders() {
+    private HttpHeaders buildHeaders(MediaType contentType) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        if (contentType != null) {
+            headers.setContentType(contentType);
+        }
 
         // Propagar el JWT al microservicio para que pueda validar la identidad
         String token = obtenerTokenActual();

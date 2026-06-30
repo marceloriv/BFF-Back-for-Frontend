@@ -2,6 +2,7 @@ package com.ticketti.bff.controller;
 
 import com.ticketti.bff.service.ApiGatewayService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +34,17 @@ public class GatewayProxyController {
 			HttpServletRequest request
 	) {
 		return apiGatewayService.reenviarPost(microservicio, body, request);
+	}
+
+	// Multipart (subida de archivos) no puede leerse como @RequestBody String:
+	// eso corrompe el binario y rompe el boundary. Spring elige este método
+	// sobre reenviarPost() cuando el Content-Type es multipart/form-data.
+	@PostMapping(value = "/{microservicio}/**", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public String reenviarPostMultipart(
+			@PathVariable String microservicio,
+			HttpServletRequest request
+	) {
+		return apiGatewayService.reenviarPostMultipart(microservicio, request);
 	}
 
 	@PutMapping("/{microservicio}/**")
