@@ -7,6 +7,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import java.util.List;
+
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 public class SecurityConfig {
@@ -15,8 +20,12 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http.csrf(csrf -> csrf.disable())
+        return http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers(SecurityRoutes.PUBLIC_ROUTES).permitAll()
 
@@ -25,17 +34,19 @@ public class SecurityConfig {
 
                         // Crear usuario: POST público (registro)
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/").permitAll()
 
                         // Login público
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/login/").permitAll()
 
                         // Validar credenciales público
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/validar-credenciales").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/usuarios/validar-credenciales/").permitAll()
 
                         // Listar todos los usuarios: solo ADMIN o ADMINPLATAFORMA
                         .requestMatchers(HttpMethod.GET, "/api/v1/usuarios")
                         .hasAnyRole("ADMIN", "ADMINPLATAFORMA")
-
 
                         // Solo el admin de plataforma puede cambiar roles
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/usuarios/*/rol")
@@ -136,7 +147,8 @@ public class SecurityConfig {
                         // Las donaciones se crean internamente cuando RabbitMQ entrega el evento
                         // "pago.confirmado" desde MSCarrito.
 
-                        // Mis donaciones: accesible para cualquier usuario autenticado (CLIENTE incluido)
+                        // Mis donaciones: accesible para cualquier usuario autenticado (CLIENTE
+                        // incluido)
                         .requestMatchers(HttpMethod.GET, "/api/v1/donaciones/me").authenticated()
                         // Reportes de donaciones: ADMINPLATAFORMA ve todo,
                         // ORGANIZADOR ve solo las de las causas sociales asociadas a sus eventos
@@ -196,6 +208,20 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .addFilterBefore(filtro, UsernamePasswordAuthenticationFilter.class)
                 .build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:3000",
+                "http://front-ticketti-2026.s3-website-us-east-1.amazonaws.com"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(
+                List.of("Authorization", "Content-Type", "Accept", "X-Usuario-Id", "X-Rol-Usuario-Id"));
+        config.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 
 }
