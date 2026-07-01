@@ -213,21 +213,20 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:3000",
+
+        config.setAllowedOrigins(List.of(
                 "http://front-ticketti-fullstacks3-2026.s3-website-us-east-1.amazonaws.com"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+
         config.setAllowedHeaders(
                 List.of("Authorization", "Content-Type", "Accept", "X-Usuario-Id", "X-Rol-Usuario-Id"));
+
         config.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
     }
 
 }
-
-
-
-
-
-
