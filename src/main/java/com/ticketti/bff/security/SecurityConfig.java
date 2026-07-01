@@ -214,7 +214,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:3000",
-                "http://front-ticketti-2026.s3-website-us-east-1.amazonaws.com"));
+                "http://front-ticketti-fullstacks3-2026.s3-website-us-east-1.amazonaws.com"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(
                 List.of("Authorization", "Content-Type", "Accept", "X-Usuario-Id", "X-Rol-Usuario-Id"));
